@@ -1,0 +1,208 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentPage
+    x:Class="CurrencyConverterMaui.MainPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+
+    BackgroundColor="{AppThemeBinding Light=#F4F5F7, Dark=#111214}">
+
+    <ScrollView>
+
+        <VerticalStackLayout
+            Padding="24,30"
+            Spacing="20"
+            MaximumWidthRequest="600"
+            HorizontalOptions="Center">
+
+            <!-- Заголовок -->
+
+            <VerticalStackLayout Spacing="3">
+
+                <Label
+                    Text="Конвертер валют"
+                    FontSize="30"
+                    FontAttributes="Bold"
+                    TextColor="{AppThemeBinding Light=#16181D, Dark=White}" />
+
+                <Label
+                    Text="Курсы Центрального банка РФ"
+                    FontSize="14"
+                    TextColor="{AppThemeBinding Light=#777B84, Dark=#A5A7AD}" />
+
+            </VerticalStackLayout>
+
+
+            <!-- Выбор даты -->
+
+            <Border
+                BackgroundColor="{AppThemeBinding Light=White, Dark=#1C1D21}"
+                StrokeThickness="0"
+                StrokeShape="RoundRectangle 18"
+                Padding="18">
+
+                <Grid
+                    ColumnDefinitions="*,Auto"
+                    RowDefinitions="Auto,Auto"
+                    RowSpacing="5">
+
+                    <Label
+                        Text="Дата курса"
+                        FontSize="14"
+                        FontAttributes="Bold"
+                        TextColor="{AppThemeBinding Light=#16181D, Dark=White}"
+                        VerticalOptions="Center" />
+
+                    <DatePicker
+                        Grid.Column="1"
+                        Date="{Binding SelectedDate, Mode=TwoWay}"
+                        MaximumDate="{Binding Today}"
+                        MinimumDate="{Binding MinimumDate}"
+                        Format="dd.MM.yyyy"
+                        HorizontalOptions="End"
+                        VerticalOptions="Center" />
+
+                    <Label
+                        Grid.Row="1"
+                        Grid.ColumnSpan="2"
+                        Text="{Binding RateDateText}"
+                        FontSize="12"
+                        TextColor="{AppThemeBinding Light=#81858D, Dark=#A5A7AD}" />
+
+                </Grid>
+
+            </Border>
+
+
+            <!-- Исходная валюта -->
+
+            <VerticalStackLayout Spacing="8">
+
+                <Label
+                    Text="ОТДАЮ"
+                    FontSize="12"
+                    FontAttributes="Bold"
+                    CharacterSpacing="1.5"
+                    TextColor="{AppThemeBinding Light=#777B84, Dark=#A5A7AD}" />
+
+                <Border
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=#1C1D21}"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 20"
+                    Padding="18">
+
+                    <VerticalStackLayout Spacing="18">
+
+                        <Picker
+                            Title="Выберите валюту"
+                            ItemsSource="{Binding Currencies}"
+                            ItemDisplayBinding="{Binding DisplayName}"
+                            SelectedItem="{Binding FromCurrency, Mode=TwoWay}"
+                            FontSize="16"
+                            TextColor="{AppThemeBinding Light=#16181D, Dark=White}" />
+
+                        <Entry
+                            Text="{Binding FirstAmount, Mode=TwoWay}"
+                            Keyboard="Numeric"
+                            Placeholder="0"
+                            FontSize="32"
+                            FontAttributes="Bold"
+                            HorizontalTextAlignment="End"
+                            TextColor="{AppThemeBinding Light=#16181D, Dark=White}"
+                            BackgroundColor="Transparent" />
+
+                    </VerticalStackLayout>
+
+                </Border>
+
+            </VerticalStackLayout>
+
+
+            <!-- Пока просто визуальная стрелка -->
+
+            <Button
+                Text="⇅"
+                Command="{Binding SwapCurrenciesCommand}"
+                WidthRequest="60"
+                HeightRequest="60"
+                Padding="0"
+                CornerRadius="30"
+                FontSize="24"
+                HorizontalOptions="Center"
+                BackgroundColor="{AppThemeBinding Light=#202124, Dark=#EEEEEE}"
+                TextColor="{AppThemeBinding Light=White, Dark=#16181D}" />
+
+
+            <!-- Получаемая валюта -->
+
+            <VerticalStackLayout Spacing="8">
+
+                <Label
+                    Text="ПОЛУЧАЮ"
+                    FontSize="12"
+                    FontAttributes="Bold"
+                    CharacterSpacing="1.5"
+                    TextColor="{AppThemeBinding Light=#777B84, Dark=#A5A7AD}" />
+
+                <Border
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=#1C1D21}"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 20"
+                    Padding="18">
+
+                    <VerticalStackLayout Spacing="18">
+
+                        <Picker
+                            Title="Выберите валюту"
+                            ItemsSource="{Binding Currencies}"
+                            ItemDisplayBinding="{Binding DisplayName}"
+                            SelectedItem="{Binding ToCurrency, Mode=TwoWay}"
+                            FontSize="16"
+                            TextColor="{AppThemeBinding Light=#16181D, Dark=White}" />
+
+                        <Entry
+                            Text="{Binding SecondAmount, Mode=TwoWay}"
+                            Keyboard="Numeric"
+                            Placeholder="0"
+                            FontSize="32"
+                            FontAttributes="Bold"
+                            HorizontalTextAlignment="End"
+                            TextColor="{AppThemeBinding Light=#16181D, Dark=White}"
+                            BackgroundColor="Transparent" />
+
+                    </VerticalStackLayout>
+
+                </Border>
+
+            </VerticalStackLayout>
+
+
+            <!-- Загрузка -->
+
+            <ActivityIndicator
+                IsRunning="{Binding IsBusy}"
+                IsVisible="{Binding IsBusy}"
+                HorizontalOptions="Center" />
+
+
+            <!-- Ошибка -->
+
+            <Label
+                Text="{Binding ErrorMessage}"
+                TextColor="#D93025"
+                FontSize="13" />
+
+            <!-- Источник -->
+
+            <Label
+                Text="Данные: cbr-xml-daily.ru"
+                FontSize="11"
+                HorizontalOptions="Center"
+                TextColor="{AppThemeBinding Light=#A0A3A8, Dark=#777A80}"
+                Margin="0,10,0,0" />
+
+        </VerticalStackLayout>
+
+    </ScrollView>
+
+</ContentPage>
