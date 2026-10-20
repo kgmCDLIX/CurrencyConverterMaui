@@ -119,8 +119,6 @@ public class MainViewModel : BaseViewModel
     }
 
 
-    // второе  поле ввода
-
     // второе поле ввода
 
     private string _secondAmount = "";
@@ -234,8 +232,8 @@ public class MainViewModel : BaseViewModel
 
         SwapCurrenciesCommand = new Command(SwapCurrencies);
 
-        // здесь специально меняем внутренние поля, а не свойства
-        // чтобы во время конструктора не запускались лишние пересчеты
+        //специально меняем внутренние поля, а не свойства
+        //чтобы во время конструктора не запускались лишние пересчеты
 
         _selectedDate = LoadSavedDate();
 
@@ -269,6 +267,7 @@ public class MainViewModel : BaseViewModel
     {
         IsBusy = true;
         ErrorMessage = "";
+        RateDateText = "Загрузка курса";
 
         try
         {
@@ -472,6 +471,8 @@ public class MainViewModel : BaseViewModel
 
     // пересчёт из первой валюты во вторую
 
+    // пересчёт из первой валюты во вторую
+
     private void ConvertFromTo()
     {
         if (FromCurrency == null ||
@@ -485,36 +486,62 @@ public class MainViewModel : BaseViewModel
                 FirstAmount,
                 out decimal amount))
         {
+            _isUpdating = true;
+
+            SecondAmount = "";
+
+            _isUpdating = false;
+
+            ErrorMessage =
+                "Введите корректное число допустимого размера.";
+
             return;
         }
 
 
-        // исходную в рубли
+        try
+        {
+            // исходную в рубли
 
-        decimal rubles =
-            amount *
-            FromCurrency.RubPerUnit;
-
-
-        // из рублей в целевую
-
-        decimal result =
-            rubles /
-            ToCurrency.RubPerUnit;
+            decimal rubles =
+                checked(
+                    amount *
+                    FromCurrency.RubPerUnit);
 
 
-        _isUpdating = true;
+            // из рублей в целевую
 
-        SecondAmount =
-            FormatAmount(result);
+            decimal result =
+                checked(
+                    rubles /
+                    ToCurrency.RubPerUnit);
 
-        _isUpdating = false;
 
-        SaveState();
+            _isUpdating = true;
+
+            SecondAmount =
+                FormatAmount(result);
+
+            _isUpdating = false;
+
+
+            ErrorMessage = "";
+
+            SaveState();
+        }
+        catch (OverflowException)
+        {
+            _isUpdating = true;
+
+            SecondAmount = "";
+
+            _isUpdating = false;
+
+            ErrorMessage =
+                "Число слишком большое для расчёта.";
+        }
     }
 
-
-    // второе поле -> первое 
 
     // второе поле -> первое 
 
@@ -531,33 +558,60 @@ public class MainViewModel : BaseViewModel
                 SecondAmount,
                 out decimal amount))
         {
+            _isUpdating = true;
+
+            FirstAmount = "";
+
+            _isUpdating = false;
+
+            ErrorMessage =
+                "Введите корректное число допустимого размера.";
+
             return;
         }
 
 
-        // переводим вторую валюту в рубли
+        try
+        {
+            // переводим вторую валюту в рубли
 
-        decimal rubles =
-            amount *
-            ToCurrency.RubPerUnit;
-
-
-        // из рублей переводим в первую валюту
-
-        decimal result =
-            rubles /
-            FromCurrency.RubPerUnit;
+            decimal rubles =
+                checked(
+                    amount *
+                    ToCurrency.RubPerUnit);
 
 
-        _isUpdating = true;
+            // из рублей переводим в первую валюту
 
-        FirstAmount =
-            FormatAmount(result);
+            decimal result =
+                checked(
+                    rubles /
+                    FromCurrency.RubPerUnit);
 
-        _isUpdating = false;
+
+            _isUpdating = true;
+
+            FirstAmount =
+                FormatAmount(result);
+
+            _isUpdating = false;
 
 
-        SaveState();
+            ErrorMessage = "";
+
+            SaveState();
+        }
+        catch (OverflowException)
+        {
+            _isUpdating = true;
+
+            FirstAmount = "";
+
+            _isUpdating = false;
+
+            ErrorMessage =
+                "Число слишком большое для расчёта.";
+        }
     }
 
 
